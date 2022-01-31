@@ -14,15 +14,37 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
+from rest_framework import routers
+from rest_framework import permissions
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
 from jimmyapp.views import hello_geek
-from rest_framework_swagger.views import get_swagger_view
+from users import views
+from rest_framework import routers
 
-schema_view = get_swagger_view(title='Pastebin API')
+
+router = routers.DefaultRouter()
+router.register(r'users', views.UserViewSet)
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Jimmys API",
+        default_version='v1',
+        description="Api for testing integrations",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('geek/', hello_geek),
-    path('api/', schema_view),
+    path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
