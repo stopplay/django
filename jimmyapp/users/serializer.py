@@ -1,9 +1,22 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from users.models import User
+from users.models import Address, Establishement, User
 
 class UserSerielizer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['app_id', 'first_name', 'phone_number', 'email_address']
+        fields = ['user_id', 'name','email', 'address']
+
+
+class EstablishmentSerielizer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Establishement
+        fields = ['establishment_id', 'name','email', 'address']
+
+
+
+class AddressSerielizer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Address
+        fields = ['address_id', 'address_line_1', 'address_line_2', 'town', 'city', 'post_code']
