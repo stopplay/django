@@ -29,6 +29,8 @@ router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'establishments', views.EstablishmentViewSet)
 router.register(r'address', views.AddressViewSet)
+router.register(r'order', views.OrderViewSet)
+
 
 schema_view = get_schema_view(
     openapi.Info(
