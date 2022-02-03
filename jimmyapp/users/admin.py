@@ -26,7 +26,7 @@ admin.site.register(Address, AddressAdmin)
 
 class OrderAdmin(admin.ModelAdmin):
     model = Order
-    fields = ['number', 'user', 'establishment', 'comment', 'stuart_delivery_fee']
+    fields = ['number', 'user', 'establishment', 'comment', 'stuart_delivery_fee', 'stuart_tracking_url']
 
 admin.site.register(Order, OrderAdmin)
 

@@ -7,6 +7,8 @@ import http.client
 import json
 import requests
 from datetime import date, timedelta
+from types import SimpleNamespace
+
 
 
 # Validate the address of the user 
@@ -162,17 +164,20 @@ def post_stuart_job(order):
     stuart_response = json_response
     pricing_details = stuart_response.get('pricing',{})
     final_price = pricing_details.get("price_tax_included", {})
-    delivery_pickup = stuart_response.get('pickup_at',{})
     delivery_details = stuart_response.get('deliveries',{})
-    delivery_id = delivery_details.get("id", {})
-    delivery_status = delivery_details.get("status", {})
-    delivery_tracking = delivery_details.get("tracking_url", {})
+    delivery_details = delivery_details[0]
+    delivery_tracking_url = delivery_details.get("tracking_url", {})
+    # delivery_pickup = stuart_response.get('pickup_at',{})
+    # delivery_id = delivery_details.get("id", {})
+    # delivery_status = delivery_details.get("status", {})
+    # delivery_tracking = delivery_details.get("tracking_url", ())
+    # print(delivery_tracking)
     print(final_price)
     order.stuart_delivery_fee = final_price
-    order.stuart_delivery_id = delivery_id
-    order.stuart_tracking_url = delivery_tracking
-    order.stuart_delivery_status = delivery_status
-    order.stuart_collection = delivery_pickup
+    # # order.stuart_delivery_id = delivery_id
+    order.stuart_tracking_url = delivery_tracking_url
+    # order.stuart_delivery_status = delivery_status
+    # order.stuart_collection = delivery_pickup
     order.save()
     return json_response
 
