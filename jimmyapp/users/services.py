@@ -2,14 +2,46 @@ from users.models import Address, User, Establishment
 import requests
 import json
 from datetime import date, datetime, timedelta
-from users.models import User, Establishment, Address, Order
+from users.models import User, Establishment, Address, Order, Settings
 import http.client
 import json
 import requests
 from datetime import date, timedelta
-from types import SimpleNamespace
+
+def create_webhook(settings):
+
+    url = "https://api.sandbox.stuart.com/v2/webhooks"
+
+    payload = json.dumps({
+    "url": settings.websocket,
+    "topics": [
+        "job/create",
+        "job/update",
+    ]
+            })
 
 
+    headers = {
+    'Authorization': 'Bearer eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJzdHVhcnQtYXBpIiwiaWF0IjoxNjQzNzM4Njk3LCJqdGkiOiJlZjg3MDYzMC0yNDZlLTQ1ZjgtOWE1Ni1hNjFhNTMwZDNlODEiLCJzcnQ6ZW52aXJvbm1lbnRzIjpbInNhbmRib3giXSwic3J0OmNsaWVudF9pZCI6IjQ0OTgzOSIsInNydDpjbGllbnRfaWRzIjpbIjQ0OTgzOSJdLCJzcnQ6em9uZV9jb2RlcyI6WyJhbnkiXSwic3J0OmZsZWV0X2lkcyI6WyIxIl0sInNydDpxdWVyaWVzIjpbIl9fc2NoZW1hIiwiX190eXBlbmFtZSIsIndob2FtaSIsInBhY2thZ2UiLCJwYWNrYWdlcyIsInpvbmVzIl0sInNydDptdXRhdGlvbnMiOlsicGFja2FnZSJdfQ.ywxA0s1alyYTKmpgCKNIlce9kiDbUBIunedhBdKOiDR3kTVEaJkJGRfKt3iO5qUpuPv08mfkgIBIRkVqHvmw1A',
+    'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, data=payload, headers=headers)
+
+    print(response.text)
+
+import requests
+
+def check_webhooks():
+
+    url = "https://api.sandbox.stuart.com/v2/webhooks"
+
+    payload = "{}"
+    headers = {'authorization': 'Bearer <<access_token>>'}
+
+    response = requests.request("GET", url, data=payload, headers=headers)
+
+    print(response.text)
 
 # Validate the address of the user 
 def validate_user_address(user):
@@ -79,7 +111,7 @@ def post_stuart_price(order):
         ],
         "dropoffs": [
         {
-            "package_type": "small",
+            "package_type": "Small",
             "package_description": "",
             "address": str(u_profile.address),
             "comment": "",
@@ -161,23 +193,51 @@ def post_stuart_job(order):
     
     response = requests.request("POST", url, headers=headers, data=payload)
     json_response = response.json()
+
+    # Responce
     stuart_response = json_response
     pricing_details = stuart_response.get('pricing',{})
     final_price = pricing_details.get("price_tax_included", {})
+    delivery_pickup = stuart_response.get('pickup_at',{})
+    delivery_distance = stuart_response.get('distance',{})
+    delivery_duration = stuart_response.get('duration',{})
     delivery_details = stuart_response.get('deliveries',{})
     delivery_details = delivery_details[0]
-    delivery_tracking_url = delivery_details.get("tracking_url", {})
-    # delivery_pickup = stuart_response.get('pickup_at',{})
-    # delivery_id = delivery_details.get("id", {})
-    # delivery_status = delivery_details.get("status", {})
-    # delivery_tracking = delivery_details.get("tracking_url", ())
-    # print(delivery_tracking)
-    print(final_price)
+    delivery_tracking_url = delivery_details.get("tracking_url", {}) 
+    delivery_id = delivery_details.get("id", {})
+    delivery_status = delivery_details.get("status", {})
+    # Testing Response
+
+    print(final_price, delivery_pickup, delivery_distance, delivery_duration) 
+    # Saving the date to the Order Model
     order.stuart_delivery_fee = final_price
-    # # order.stuart_delivery_id = delivery_id
-    order.stuart_tracking_url = delivery_tracking_url
-    # order.stuart_delivery_status = delivery_status
-    # order.stuart_collection = delivery_pickup
+    order.stuart_tracking_url = delivery_tracking_url    
+    order.stuart_pickup = delivery_pickup
+    order.stuart_delivery_distance = delivery_distance
+    order.stuart_delivery_duration = delivery_duration
+    order.stuart_delivery_id = delivery_id
+    order.stuart_delivery_status = delivery_status
     order.save()
     return json_response
 
+
+
+def post_cancel_stuart_job(order):
+    job_id = order.stuart_delivery_id
+    print(job_id)
+
+    url = f"https://api.sandbox.stuart.com/v2/jobs/{job_id}/cancel"
+
+    payload = json.dumps({
+                    "public_reason_key": "package_not_ready",
+                    "comment": "Unable to fullfill order"
+                    })
+
+    headers = {
+    'Authorization': 'Bearer eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJzdHVhcnQtYXBpIiwiaWF0IjoxNjQzNzM4Njk3LCJqdGkiOiJlZjg3MDYzMC0yNDZlLTQ1ZjgtOWE1Ni1hNjFhNTMwZDNlODEiLCJzcnQ6ZW52aXJvbm1lbnRzIjpbInNhbmRib3giXSwic3J0OmNsaWVudF9pZCI6IjQ0OTgzOSIsInNydDpjbGllbnRfaWRzIjpbIjQ0OTgzOSJdLCJzcnQ6em9uZV9jb2RlcyI6WyJhbnkiXSwic3J0OmZsZWV0X2lkcyI6WyIxIl0sInNydDpxdWVyaWVzIjpbIl9fc2NoZW1hIiwiX190eXBlbmFtZSIsIndob2FtaSIsInBhY2thZ2UiLCJwYWNrYWdlcyIsInpvbmVzIl0sInNydDptdXRhdGlvbnMiOlsicGFja2FnZSJdfQ.ywxA0s1alyYTKmpgCKNIlce9kiDbUBIunedhBdKOiDR3kTVEaJkJGRfKt3iO5qUpuPv08mfkgIBIRkVqHvmw1A',
+    'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+    json_response = response.json()
+    print (json_response)

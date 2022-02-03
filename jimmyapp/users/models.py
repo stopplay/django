@@ -4,6 +4,16 @@ from django.db import models
 
 # Create your models here.
 
+class Settings(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255, null=False, blank=False, default="Provider")
+    websocket = models.TextField(null=True, blank=True, default="WebsocketURL")
+
+    def __str__(self):
+        if self.websocket:
+            return f'{self.websocket}'
+        return ''   
+
 class User(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, null=False, blank=False, default="Name")
@@ -57,10 +67,15 @@ class Order(models.Model):
     user = models.ForeignKey('users.User', blank=True, null=True, on_delete=models.SET_NULL, verbose_name=('Order User'))
     establishment = models.ForeignKey('users.Establishment', blank=True, null=True, on_delete=models.SET_NULL, verbose_name=('Order Establishment'))
     comment = models.TextField(null=True, blank=True)
+    STUART_DELIVERY_SIZE_CHOICES = [('Small', 'Small'),('Medium', 'Medium'), ('Large' , 'Large')]
+    stuart_delivery_size = models.CharField(max_length=50, choices=STUART_DELIVERY_SIZE_CHOICES)
     stuart_delivery_id = models.IntegerField(null=True, blank=True)
     stuart_tracking_url =  models.TextField(null=True, blank=True)
     stuart_delivery_status =  models.TextField(null=True, blank=True)
-    stuart_collection = models.TextField(null=True, blank=True)
+    stuart_pickup = models.DateTimeField(null=True, blank=True)
+    stuart_delivery_distance = models.FloatField(null=True, blank=True)
+    stuart_delivery_duration = models.FloatField(null=True, blank=True)
+
 
     def __str__(self):
         if self.number:

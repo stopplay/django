@@ -1,6 +1,6 @@
 from pyexpat import model
 from django.contrib import admin
-from users.models import User, Establishment, Address, Order
+from users.models import User, Establishment, Address, Order, Settings
 
 
 
@@ -26,10 +26,16 @@ admin.site.register(Address, AddressAdmin)
 
 class OrderAdmin(admin.ModelAdmin):
     model = Order
-    fields = ['number', 'user', 'establishment', 'comment', 'stuart_delivery_fee', 'stuart_tracking_url']
+    fields = ['number', 'user', 'establishment', 'comment', 'stuart_delivery_fee', 'stuart_tracking_url', 'stuart_pickup', 'stuart_delivery_distance','stuart_delivery_duration', 'stuart_delivery_id' , 'stuart_delivery_status']
 
 admin.site.register(Order, OrderAdmin)
 
+
+class SettingsAdmin(admin.ModelAdmin):
+       model = Settings
+       fields = ['name', 'websocket']
+
+admin.site.register(Settings, SettingsAdmin)
 
 
 

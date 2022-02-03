@@ -7,12 +7,25 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from users import services
 from users.admin import EstablishmentAdmin
-from users.models import User, Establishment, Address, Order
-from users.serializer import UserSerielizer, EstablishmentSerielizer, AddressSerielizer, OrderSerializer
-from users.services import validate_user_address ,validate_establishments_address, post_stuart_price, post_stuart_job
+from users.models import User, Establishment, Address, Order, Settings
+from users.serializer import UserSerielizer, EstablishmentSerielizer, AddressSerielizer, OrderSerializer, SettingSerielizer
+from users.services import validate_user_address ,validate_establishments_address, post_stuart_price, post_stuart_job, post_cancel_stuart_job, create_webhook
 from rest_framework.decorators import action
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 
+class SettingViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Settings.objects.all()
+    serializer_class = SettingSerielizer
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(methods=['get'], detail=True)
+    def get_websocket_url(self,request, pk):
+        settings = self.get_object()
+        data = create_webhook(settings)
+        return Response(data, content_type="application/json")
 
 # Create your views here.
 class UserViewSet(viewsets.ModelViewSet):
@@ -71,6 +84,13 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer = OrderSerializer(order, context={'request': request})
         data = post_stuart_job(order)
         return Response(data, status=200,content_type="application/json")
+
+    @action(methods=['get'], detail=True)
+    def request_cancel_stuart_job(self, request, pk):
+        order = self.get_object()
+        data = post_cancel_stuart_job(order)
+        return Response(data, status=200,content_type="application/json")
+
 
 
 class AddressViewSet(viewsets.ModelViewSet):

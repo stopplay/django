@@ -2,8 +2,13 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 
-from users.models import Address, Establishment, User, Order
+from users.models import Address, Establishment, User, Order, Settings
 
+
+class SettingSerielizer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Settings
+        fields = ['name', 'websocket']
 
 class AddressSerielizer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -13,7 +18,7 @@ class AddressSerielizer(serializers.HyperlinkedModelSerializer):
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Order
-        fields = ['id', 'number', 'user', 'establishment', 'comment']
+        fields = ['user', 'establishment', 'comment', 'stuart_delivery_size']
 
 class UserSerielizer(serializers.HyperlinkedModelSerializer):
     class Meta:
