@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, generics, status
 from rest_framework.views import APIView 
+from rest_framework import mixins
 from rest_framework import generics
 from rest_framework.response import Response
 import datetime
@@ -22,12 +23,15 @@ import datetime
 
 class RegisterView(APIView):
 
-    @action(detail=True, methods=['post'])
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+    @action(detail=True, methods=['post'])  
+    def post(self, request) :
+        try:
+            serializer = UserSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+        except:
+            return Response("")
 
 class LoginView(APIView):
 
@@ -68,7 +72,7 @@ class LoginView(APIView):
 class UserView(APIView):
 
     @action(detail=True, methods=['get'])
-    def get(self, request):
+    def get_token(self, request, format=None):
         token = request.COOKIES.get('token')
 
         if not token:
