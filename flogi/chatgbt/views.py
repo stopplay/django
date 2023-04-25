@@ -12,9 +12,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 import openai
 
+import googlemaps
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
-
 
 
 
@@ -138,4 +138,25 @@ def flogi_ai_moderate(request):
         
     return Response(data=output, status=200)
 
+
+
+
+def flogi_google_saved_places(self, request):
+
+    # Define your API key
+    api_key = 'AIzaSyD9XJ7_na5NbWlapQ-ScsnuvbLJ0_s9mrk'
+
+    # Create a client object
+    client = googlemaps.Client(api_key)
+
+    # Use the place() method to retrieve details about the authenticated user's saved places
+    saved_places = client.place('user/me/saved')
+
+        # Loop through the saved places and extract information about each place
+    for place in saved_places['result']['items']:
+        name = place['title']
+        location = place['location']
+        # Do something with the name and location of the saved place
+        print(name)
+        print(location)
 

@@ -70,6 +70,8 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'chatgbt',
     'users',
+    'qrflogi',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -102,6 +104,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'flogi.wsgi.application'
+ASGI_APPLICATION = 'flogi.asgi.application'
 
 
 # Database
