@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-z6i4-8^g!r72xt61!$0c)6_3=^bpu(8bs@(5c-bpayd#%ied(2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['portal.flogi.io']
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
