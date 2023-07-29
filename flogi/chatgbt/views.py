@@ -18,9 +18,10 @@ from drf_spectacular.types import OpenApiTypes
 
 
 
+
 # Create your views here.s
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def flogi_ai(request):
 
     prompt = request.data.get("prompt")
@@ -39,7 +40,7 @@ def flogi_ai(request):
     return Response(data=output, status=200)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_flogi_ai_modules(request):
 
     openai.api_key = "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"
@@ -49,7 +50,7 @@ def get_flogi_ai_modules(request):
     return Response(data=response, status=200)
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def flogi_ai_edit(request):
 
     prompt = request.data.get("prompt")
@@ -65,7 +66,7 @@ def flogi_ai_edit(request):
     return Response(data=response, status=200)
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def flogi_ai_image_create(request):
 
     openai.api_key = "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"
@@ -81,7 +82,7 @@ def flogi_ai_image_create(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def flogi_ai_image_edit(request):
     
     
@@ -107,7 +108,7 @@ def flogi_ai_image_edit(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def flogi_ai_moderate(request):
 
     prompt = request.data.get("prompt")

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-z6i4-8^g!r72xt61!$0c)6_3=^bpu(8bs@(5c-bpayd#%ied(2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['portal.flogi.io']
+ALLOWED_HOSTS = ['127.0.0.1','127.0.0.1:8000','portal.flogi.app']
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -39,7 +39,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
@@ -102,6 +102,12 @@ TEMPLATES = [
         },
     },
 ]
+
+
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 
 WSGI_APPLICATION = 'flogi.wsgi.application'
 ASGI_APPLICATION = 'flogi.asgi.application'

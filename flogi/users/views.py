@@ -19,10 +19,12 @@ from users.serializers import UserSerializer
 from users.models import User 
 import jwt
 import datetime
+from django.views.decorators.csrf import csrf_exempt
 
 
 class RegisterView(APIView):
 
+    @csrf_exempt
     @action(detail=True, methods=['post'])  
     def post(self, request) :
         try:
@@ -37,8 +39,9 @@ class LoginView(APIView):
 
     @action(detail=True, methods=['post'])
     def post(self, request): 
-        email = request.data['email']
-        password = request.data['password']
+
+        email = self.request.data.get('email', None)
+        password = self.request.data.get('password', None)
 
         user = User.objects.filter(email=email).first()
 
@@ -54,23 +57,22 @@ class LoginView(APIView):
             'iat': datetime.datetime.utcnow()
         }
 
-        token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
+        token = jwt.encode(payload, 'secret', algorithm='HS256')
 
         response = Response()
 
         response.set_cookie(key='jwt', value=token, httponly=True)
 
 
-        response.data (
-            {
+        response.data = {
                 "token" : token
             }
-        )
 
         return response
 
 class UserView(APIView):
 
+    @csrf_exempt
     @action(detail=True, methods=['get'])
     def get_token(self, request, format=None):
         token = request.COOKIES.get('token')
@@ -91,6 +93,7 @@ class UserView(APIView):
 
 class LogoutView(APIView):
     
+    @csrf_exempt
     @action(detail=True, methods=['post'])
     def post(self, request):
         response = Response()
