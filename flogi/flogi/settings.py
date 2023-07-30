@@ -119,7 +119,7 @@ ASGI_APPLICATION = 'flogi.asgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'flogi.sqlite3',
+        'NAME': BASE_DIR / 'flogi4.sqlite3',
     }
 }
 
@@ -179,4 +179,4 @@ AUTH_USER_MODEL = 'users.User'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-OPENAIKEY = os.environ.get("OPENAI_API_KEY")
+OPENAIKEY = ''
