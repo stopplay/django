@@ -15,6 +15,7 @@ import openai
 import googlemaps
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
+from flogi.settings import OPENAIKEY
 
 
 
@@ -27,7 +28,7 @@ def flogi_ai(request):
     prompt = request.data.get("prompt")
     model = request.data.get("model", None)
 
-    openai.api_key = "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"
+    openai.api_key = OPENAIKEY
 
     response = openai.Completion.create(model=f'{model}', 
                                     prompt=f'{prompt}', 
@@ -43,7 +44,7 @@ def flogi_ai(request):
 @permission_classes([IsAuthenticated])
 def get_flogi_ai_modules(request):
 
-    openai.api_key = "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"
+    openai.api_key = OPENAIKEY
 
     response = openai.Model.list()
     
@@ -56,7 +57,7 @@ def flogi_ai_edit(request):
     prompt = request.data.get("prompt")
     instruction = request.data.get("instruction")
 
-    openai.api_key = "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"
+    openai.api_key = OPENAIKEY
     response = openai.Edit.create(
         model="text-davinci-edit-001",
         input= f'{prompt}',
@@ -69,7 +70,7 @@ def flogi_ai_edit(request):
 @permission_classes([IsAuthenticated])
 def flogi_ai_image_create(request):
 
-    openai.api_key = "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"
+    openai.api_key = OPENAIKEY
     response = openai.Image.create(
                         prompt="A cute baby sea otter",
                         n=2,
@@ -89,7 +90,7 @@ def flogi_ai_image_edit(request):
     image = request.data.get("image")
     prompt = request.data.get("prompt")
 
-    openai.api_key = "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"
+    openai.api_key = OPENAIKEY
 
     response = openai.Image.create_edit(
             image=open(f'{image}', "rb"),
@@ -127,7 +128,7 @@ def flogi_ai_moderate(request):
                     input=f'{prompt}'
                     )
 
-        openai.api_key = "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"
+        openai.api_key = OPENAIKEY
 
         response = openai.Moderation.create(
                     input=f'{prompt}'
