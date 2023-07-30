@@ -16,17 +16,47 @@ import googlemaps
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
 from flogi.settings import OPENAIKEY
-
+import json
 
 
 
 # Create your views here.s
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def flogi_ai(request):
+def flogi_ai_message(request):
 
-    prompt = request.data.get("prompt")
-    model = request.data.get("model", None)
+    user = request.user
+    try:
+        prompt = request.data.get("prompt", 'What is the greatest team')
+        model = request.data.get("model", 'gpt-3.5-turbo-16k-0613')
+    except:
+        raise Exception(f"No 'prompt' provided ")
+
+    openai.api_key = OPENAIKEY
+    
+    response = openai.ChatCompletion.create(model=model, 
+                                            messages = [ 
+                                              {'role': 'user', 'content': prompt}
+                                            ],
+                                            temperature=0,
+                                            max_tokens=10
+                                            )
+                                    
+
+    output = response["choices"][0]["message"]['content']
+
+    return Response(data=output, status=200)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def flogi_ai_text(request):
+
+    try:
+        prompt = request.data.get("prompt", 'What is the greatest team')
+        model = request.data.get("model", 'text-davinci-003')
+    except:
+        raise Exception(f"No 'prompt' provided ")
 
     openai.api_key = OPENAIKEY
 
@@ -35,13 +65,14 @@ def flogi_ai(request):
                                     temperature=0,
                                     max_tokens=10
                                     )
+                                    
 
     output = response["choices"][0]["text"]
 
     return Response(data=output, status=200)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_flogi_ai_modules(request):
 
     openai.api_key = OPENAIKEY
