@@ -14,10 +14,11 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv()
+load_dotenv('../.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -181,6 +182,5 @@ AUTH_USER_MODEL = 'users.User'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-# OPENAIKEY = os.getenv('OPENAI_API_KEY')
+OPENAIKEY = os.getenv('OPENAI_API_KEY')
 
-OPENAIKEY = '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'
