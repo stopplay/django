@@ -32,7 +32,7 @@ coreschema==0.0.4
 cryptography==40.0.2
 daphne==4.0.0
 debugpy==1.6.3
-decorator==5.1.1
+decorator==4.4.2
 defusedxml==0.7.1
 Django==4.1.4
 django-cors-headers==3.13.0
@@ -101,7 +101,7 @@ Pillow==10.1.0
 pluggy==1.2.0
 proglog==0.1.10
 prometheus-client==0.15.0
-prompt-toolkit==3.0.32
+prompt-toolkit==3.0.41
 psutil==5.9.3
 ptyprocess==0.7.0
 pure-eval==0.2.2

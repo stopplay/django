@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import User
+from users.models import User, Profile, StripeProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -17,4 +17,18 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = "__all__"
+
+
+class StripeProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StripeProfile
+        fields = "__all__"
+
+    
 

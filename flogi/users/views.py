@@ -89,6 +89,37 @@ class UserView(APIView):
         serializer = UserSerializer(user)
 
         return Response(serializer.data)
+    
+
+
+class RefreshTokenView(APIView):
+    def post(self, request):
+        refresh_token = request.COOKIES.get('refreshtoken')
+        if not refresh_token:
+            raise AuthenticationFailed('Authentication credentials were not provided.')
+
+        try:
+            payload = jwt.decode(refresh_token, 'refresh_secret', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Expired refresh token, please login again.')
+
+        # Assuming payload contains user_id
+        user = User.objects.filter(payload['id']).first()
+        if not user:
+            raise AuthenticationFailed('Invalid payload in refresh token.')
+
+        # Issue new access token
+        new_access_token = jwt.encode(
+            {
+                'user_id': user,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)  # Short expiry for access token
+            },
+            'access_secret',  # Separate secret for access token
+            algorithm='HS256'
+        )
+
+        return Response({'access_token': new_access_token})
+
 
 
 class LogoutView(APIView):

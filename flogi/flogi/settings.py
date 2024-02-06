@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'users',
     'qrflogi',
     'channels',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -110,12 +111,26 @@ TEMPLATES = [
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # or your preferred time
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # or your preferred time
 }
 
 WSGI_APPLICATION = 'flogi.wsgi.application'
 ASGI_APPLICATION = 'flogi.asgi.application'
 
 
+# AWS S3 settings
+AWS_ACCESS_KEY_ID = 'AKIA4WJZSJM6IEPJO6YM'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'flogi4'
+AWS_S3_REGION_NAME = 'us-east-1'
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+# Celery
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+
+# Console sign-in URL:https://872535968572.signin.aws.amazon.com/console
+# User name: flogi4_s3
+# Console password: Florence&Machine030618
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -125,6 +140,17 @@ DATABASES = {
         'NAME': BASE_DIR / 'flogi4.sqlite3',
     }
 }
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
 
 
 # Password validation
